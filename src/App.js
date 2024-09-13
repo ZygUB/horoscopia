@@ -18,7 +18,7 @@ const Horoscope = () => {
   const fetchHoroscope = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`);
+      const response = await axios.get(`/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`);
       const horoscopeData = response.data.data;
       setData(horoscopeData); 
       setError(null);
