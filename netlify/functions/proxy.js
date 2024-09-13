@@ -1,6 +1,6 @@
 const https = require('https');
 
-exports.handler = async function(event, context) {
+exports.handler = async function(event) {
   const { sign, day } = event.queryStringParameters;
 
   const url = `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
