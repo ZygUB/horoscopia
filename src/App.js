@@ -19,6 +19,7 @@ const Horoscope = () => {
     if (process.env.NODE_ENV === 'development') {
       return '/api/v1/get-horoscope/daily';
     } else {
+      // Using cors-anywhere as a proxy
       return `https://cors-anywhere.herokuapp.com/${apiUrl}`;
     }
   };
@@ -44,14 +45,6 @@ const Horoscope = () => {
         setError('Failed to fetch horoscope data');
         setData(null);
       });
-  };
-
-    xhr.onerror = function() {
-      setError('An error occurred during the request');
-      setData(null);
-    };
-
-    xhr.send();
   };
 
   return (
@@ -85,7 +78,7 @@ const Horoscope = () => {
         <br /><br />
 
         <button type="submit">Get Horoscope</button>
-           </form>
+      </form>
 
       {data && (
         <div style={{ marginTop: '30px' }}>
