@@ -1,8 +1,8 @@
 [build]
   functions = "netlify/functions"
-  
+
 [[redirects]]
-  from = "/api/v1/*"
-  to = "https://horoscope-app-api.vercel.app/api/v1/:splat"
+  from = "/api/*"
+  to = "https://horoscope-app-api.vercel.app/:splat"
   status = 200
   force = true
