@@ -17,7 +17,7 @@ const Horoscope = () => {
   const fetchHoroscope = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`);
+      const response = await fetch(`/api/proxy?sign=${sign}&day=${day}`);
       if (!response.ok) throw new Error('Network response was not ok');
       const horoscopeData = await response.json();
       setData(horoscopeData.data);
@@ -27,6 +27,7 @@ const Horoscope = () => {
       setData(null);
     }
   };
+
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
