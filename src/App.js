@@ -14,18 +14,37 @@ const Horoscope = () => {
 
   const days = ['YESTERDAY', 'TODAY', 'TOMORROW'];
 
-  const fetchHoroscope = async (e) => {
+  const fetchHoroscope = (e) => {
     e.preventDefault();
 
-    try {
-      const response = await fetch(`/api/get-horoscope?sign=${sign}&day=${day}`);
-      const data = await response.json();
-      setData(data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch horoscope data');
+    const xhr = new XMLHttpRequest();
+    const url = `/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
+
+    xhr.open('GET', url, true);
+    
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          const horoscopeData = response.data;
+          setData(horoscopeData);
+          setError(null);
+        } catch (err) {
+          setError('Failed to parse horoscope data');
+          setData(null);
+        }
+      } else {
+        setError('Failed to fetch horoscope data');
+        setData(null);
+      }
+    };
+
+    xhr.onerror = function() {
+      setError('An error occurred during the request');
       setData(null);
-    }
+    };
+
+    xhr.send();
   };
 
   return (
