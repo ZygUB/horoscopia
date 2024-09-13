@@ -1,25 +1,81 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import axios from 'axios';
 import './App.css';
 
-function App() {
+const Horoscope = () => {
+  const [sign, setSign] = useState('aries');
+  const [day, setDay] = useState('TODAY');
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+  const zodiacSigns = [
+    'aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 
+    'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'
+  ];
+
+  const days = ['YESTERDAY', 'TODAY', 'TOMORROW'];
+
+  const fetchHoroscope = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.get(`/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`);
+      const horoscopeData = response.data.data;
+      setData(horoscopeData); 
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch horoscope data');
+      setData(null);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h1>Horoscopia</h1>
+      <form onSubmit={fetchHoroscope}>
+        <label>
+          Select Your Zodiac Sign:
+          <select value={sign} onChange={(e) => setSign(e.target.value)}>
+            {zodiacSigns.map((zodiacSign) => (
+              <option key={zodiacSign} value={zodiacSign}>
+                {zodiacSign.charAt(0).toUpperCase() + zodiacSign.slice(1)}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <br /><br />
+
+        <label>
+          Select Day:
+          <select value={day} onChange={(e) => setDay(e.target.value)}>
+            {days.map((d) => (
+              <option key={d} value={d}>
+                {d.charAt(0).toUpperCase() + d.slice(1)}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <br /><br />
+
+        <button type="submit">Get Horoscope</button>
+      </form>
+
+      {data && (
+        <div style={{ marginTop: '30px' }}>
+          <h2>Horoscope for {sign.charAt(0).toUpperCase() + sign.slice(1)} on {day.charAt(0).toUpperCase() + day.slice(1)}</h2>
+          <p><strong>Date:</strong> {data.date}</p> {/* Accessing 'date' */}
+          <p><strong>Horoscope:</strong> {data.horoscope_data}</p> {/* Accessing 'horoscope_data' */}
+        </div>
+      )}
+
+      {error && (
+        <div style={{ marginTop: '20px', color: 'red' }}>
+          <p>{error}</p>
+        </div>
+      )}
     </div>
   );
-}
+};
 
-export default App;
+export default Horoscope;
