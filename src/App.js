@@ -18,7 +18,7 @@ const Horoscope = () => {
     e.preventDefault();
 
     const xhr = new XMLHttpRequest();
-    const url = `/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
+    const url = `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
 
     xhr.open('GET', url, true);
     
