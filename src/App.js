@@ -14,11 +14,19 @@ const Horoscope = () => {
 
   const days = ['YESTERDAY', 'TODAY', 'TOMORROW'];
 
+  const getApiBaseUrl = () => {
+    if (process.env.NODE_ENV === 'development') {
+      return '/api/v1/get-horoscope/daily';
+    } else {
+      return 'https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily';
+    }
+  };
+
   const fetchHoroscope = (e) => {
     e.preventDefault();
 
     const xhr = new XMLHttpRequest();
-    const url = `/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
+    const url = `${getApiBaseUrl()}?sign=${sign}&day=${day}`;
 
     xhr.open('GET', url, true);
     
@@ -78,7 +86,7 @@ const Horoscope = () => {
         <br /><br />
 
         <button type="submit">Get Horoscope</button>
-      </form>
+           </form>
 
       {data && (
         <div style={{ marginTop: '30px' }}>
