@@ -18,35 +18,19 @@ const Horoscope = () => {
     return 'https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily';
   };
 
-  const fetchHoroscope = (e) => {
-    e.preventDefault();
+ const fetchHoroscope = async (e) => {
+  e.preventDefault();
 
-    const url = `${getApiBaseUrl()}?sign=${sign}&day=${day}`;
-
-    fetch(url, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        'Origin': window.location.origin
-      }
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setData(data.data);
-        setError(null);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        setError('Failed to fetch horoscope data. Please try again later.');
-        setData(null);
-      });
-  };
+  try {
+    const response = await fetch(`/api/get-horoscope?sign=${sign}&day=${day}`);
+    const data = await response.json();
+    setData(data);
+    setError(null);
+  } catch (err) {
+    setError('Failed to fetch horoscope data');
+    setData(null);
+  }
+};
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
