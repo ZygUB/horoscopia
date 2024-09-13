@@ -15,37 +15,36 @@ const Horoscope = () => {
   const days = ['YESTERDAY', 'TODAY', 'TOMORROW'];
 
   const getApiBaseUrl = () => {
+    const apiUrl = 'https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily';
     if (process.env.NODE_ENV === 'development') {
       return '/api/v1/get-horoscope/daily';
     } else {
-      return 'https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily';
+      return `https://cors-anywhere.herokuapp.com/${apiUrl}`;
     }
   };
 
   const fetchHoroscope = (e) => {
     e.preventDefault();
 
-    const xhr = new XMLHttpRequest();
     const url = `${getApiBaseUrl()}?sign=${sign}&day=${day}`;
 
-    xhr.open('GET', url, true);
-    
-    xhr.onload = function() {
-      if (xhr.status === 200) {
-        try {
-          const response = JSON.parse(xhr.responseText);
-          const horoscopeData = response.data;
-          setData(horoscopeData);
-          setError(null);
-        } catch (err) {
-          setError('Failed to parse horoscope data');
-          setData(null);
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-      } else {
+        return response.json();
+      })
+      .then(data => {
+        setData(data.data);
+        setError(null);
+      })
+      .catch(error => {
+        console.error('Error:', error);
         setError('Failed to fetch horoscope data');
         setData(null);
-      }
-    };
+      });
+  };
 
     xhr.onerror = function() {
       setError('An error occurred during the request');
