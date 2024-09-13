@@ -1,28 +1,50 @@
-const fetch = require('node-fetch');
+const https = require('https');
 
 exports.handler = async function(event, context) {
   const { sign, day } = event.queryStringParameters;
 
-  try {
-    const response = await fetch(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`);
-    const data = await response.json();
+  const url = `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(data),
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      }
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to fetch horoscope data' }),
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      }
-    };
-  }
+  return new Promise((resolve, reject) => {
+    https.get(url, (response) => {
+      let data = '';
+
+      response.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      response.on('end', () => {
+        try {
+          const parsedData = JSON.parse(data);
+          resolve({
+            statusCode: 200,
+            body: JSON.stringify(parsedData),
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json',
+            },
+          });
+        } catch (error) {
+          resolve({
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Failed to parse response data' }),
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json',
+            },
+          });
+        }
+      });
+
+    }).on('error', (error) => {
+      resolve({
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Failed to fetch horoscope data' }),
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      });
+    });
+  });
 };
