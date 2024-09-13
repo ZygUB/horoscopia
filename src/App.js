@@ -28,14 +28,6 @@ const Horoscope = () => {
     }
   };
 
- xhr.onerror = function() {
-      setError('An error occurred during the request');
-      setData(null);
-    };
-
-    xhr.send();
-  };
-
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>Horoscopia</h1>
