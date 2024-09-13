@@ -14,14 +14,8 @@ const Horoscope = () => {
 
   const days = ['YESTERDAY', 'TODAY', 'TOMORROW'];
 
-  const getApiBaseUrl = () => {
-    const apiUrl = 'https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily';
-    if (process.env.NODE_ENV === 'development') {
-      return '/api/v1/get-horoscope/daily';
-    } else {
-      // Using cors-anywhere as a proxy
-      return `https://cors-anywhere.herokuapp.com/${apiUrl}`;
-    }
+   const getApiBaseUrl = () => {
+    return 'https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily';
   };
 
   const fetchHoroscope = (e) => {
@@ -29,7 +23,14 @@ const Horoscope = () => {
 
     const url = `${getApiBaseUrl()}?sign=${sign}&day=${day}`;
 
-    fetch(url)
+    fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin': window.location.origin
+      }
+    })
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -42,7 +43,7 @@ const Horoscope = () => {
       })
       .catch(error => {
         console.error('Error:', error);
-        setError('Failed to fetch horoscope data');
+        setError('Failed to fetch horoscope data. Please try again later.');
         setData(null);
       });
   };
