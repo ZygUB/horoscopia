@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import './App.css';
 
 const Horoscope = () => {
@@ -9,23 +8,43 @@ const Horoscope = () => {
   const [error, setError] = useState(null);
 
   const zodiacSigns = [
-    'aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 
+    'aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo',
     'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'
   ];
 
   const days = ['YESTERDAY', 'TODAY', 'TOMORROW'];
 
-  const fetchHoroscope = async (e) => {
+  const fetchHoroscope = (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.get(`/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`);
-      const horoscopeData = response.data.data;
-      setData(horoscopeData); 
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch horoscope data');
+
+    const xhr = new XMLHttpRequest();
+    const url = `/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
+
+    xhr.open('GET', url, true);
+    
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          const horoscopeData = response.data;
+          setData(horoscopeData);
+          setError(null);
+        } catch (err) {
+          setError('Failed to parse horoscope data');
+          setData(null);
+        }
+      } else {
+        setError('Failed to fetch horoscope data');
+        setData(null);
+      }
+    };
+
+    xhr.onerror = function() {
+      setError('An error occurred during the request');
       setData(null);
-    }
+    };
+
+    xhr.send();
   };
 
   return (
@@ -64,8 +83,8 @@ const Horoscope = () => {
       {data && (
         <div style={{ marginTop: '30px' }}>
           <h2>Horoscope for {sign.charAt(0).toUpperCase() + sign.slice(1)} on {day.charAt(0).toUpperCase() + day.slice(1)}</h2>
-          <p><strong>Date:</strong> {data.date}</p> {/* Accessing 'date' */}
-          <p><strong>Horoscope:</strong> {data.horoscope_data}</p> {/* Accessing 'horoscope_data' */}
+          <p><strong>Date:</strong> {data.date}</p>
+          <p><strong>Horoscope:</strong> {data.horoscope_data}</p>
         </div>
       )}
 
