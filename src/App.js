@@ -8,45 +8,25 @@ const Horoscope = () => {
   const [error, setError] = useState(null);
 
   const zodiacSigns = [
-    'aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo',
+    'aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 
     'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'
   ];
 
   const days = ['YESTERDAY', 'TODAY', 'TOMORROW'];
 
-  const fetchHoroscope = (e) => {
-  e.preventDefault();
-  const apiUrl = process.env.REACT_APP_API_URL || '';
-
-  const apiurl = `/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
-
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', url, true);
-
-  xhr.onload = function () {
-    if (xhr.status === 200) {
-      try {
-        const response = JSON.parse(xhr.responseText);
-        const horoscopeData = response.data;
-        setData(horoscopeData);
-        setError(null);
-      } catch (err) {
-        setError('Failed to parse horoscope data');
-        setData(null);
-      }
-    } else {
+  const fetchHoroscope = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      const horoscopeData = await response.json();
+      setData(horoscopeData.data);
+      setError(null);
+    } catch (err) {
       setError('Failed to fetch horoscope data');
       setData(null);
     }
   };
-
-  xhr.onerror = function () {
-    setError('An error occurred during the request');
-    setData(null);
-  };
-
-  xhr.send();
-};
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
