@@ -18,7 +18,7 @@ const Horoscope = () => {
   e.preventDefault();
   const apiUrl = process.env.REACT_APP_API_URL || '';
 
-  const url = `/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
+  const apiurl = `/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
 
   const xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
