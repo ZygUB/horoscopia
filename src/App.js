@@ -15,37 +15,38 @@ const Horoscope = () => {
   const days = ['YESTERDAY', 'TODAY', 'TOMORROW'];
 
   const fetchHoroscope = (e) => {
-    e.preventDefault();
+  e.preventDefault();
+  const apiUrl = process.env.REACT_APP_API_URL || '';
 
-    const xhr = new XMLHttpRequest();
-    const url = `/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
+  const url = `${apiUrl}/api/v1/get-horoscope/daily?sign=${sign}&day=${day}`;
 
-    xhr.open('GET', url, true);
-    
-    xhr.onload = function() {
-      if (xhr.status === 200) {
-        try {
-          const response = JSON.parse(xhr.responseText);
-          const horoscopeData = response.data;
-          setData(horoscopeData);
-          setError(null);
-        } catch (err) {
-          setError('Failed to parse horoscope data');
-          setData(null);
-        }
-      } else {
-        setError('Failed to fetch horoscope data');
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      try {
+        const response = JSON.parse(xhr.responseText);
+        const horoscopeData = response.data;
+        setData(horoscopeData);
+        setError(null);
+      } catch (err) {
+        setError('Failed to parse horoscope data');
         setData(null);
       }
-    };
-
-    xhr.onerror = function() {
-      setError('An error occurred during the request');
+    } else {
+      setError('Failed to fetch horoscope data');
       setData(null);
-    };
-
-    xhr.send();
+    }
   };
+
+  xhr.onerror = function () {
+    setError('An error occurred during the request');
+    setData(null);
+  };
+
+  xhr.send();
+};
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
